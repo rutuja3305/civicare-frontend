@@ -16,9 +16,10 @@ export default function CitizenLogin({ onLoginSuccess, onBack }) {
     if (phone.length < 10) { setError("Enter valid 10-digit phone number."); return; }
     setError(""); setLoading(true);
     try {
-      await axios.post(`${API}/api/auth/citizen/send-otp`, { name, phone });
-      setStep("otp");
-    } catch {
+  const res = await axios.post(`${API}/api/auth/citizen/send-otp`, { name, phone });
+  setOtp(res.data.otp); // ← auto-fills the OTP input
+  setStep("otp");
+  } catch {
       setError("Failed to send OTP. Check if backend is running.");
     }
     setLoading(false);
@@ -96,11 +97,11 @@ export default function CitizenLogin({ onLoginSuccess, onBack }) {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div style={{
-              background: "#EAF3DE", borderRadius: 10, padding: "12px 16px",
-              fontSize: 13, color: "#3B6D11"
-            }}>
-              Check your Flask terminal for the OTP
-            </div>
+  background: "#EAF3DE", borderRadius: 10, padding: "12px 16px",
+  fontSize: 13, color: "#3B6D11"
+}}>
+  Your OTP is: <strong style={{ fontSize: 20, letterSpacing: 4 }}>{otp}</strong>
+</div>
             <div>
               <label style={{ fontSize: 13, fontWeight: 500, color: "#555", display: "block", marginBottom: 6 }}>Enter 6-digit OTP</label>
               <input value={otp} onChange={e => setOtp(e.target.value)}
